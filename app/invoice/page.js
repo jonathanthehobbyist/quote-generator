@@ -7,6 +7,7 @@ export default function Invoice() {
   const [items, setItems] = useState([]);
   const [clientEmail, setClientEmail] = useState("");
   const [logo, setLogo] = useState(null);
+  const [pdflist, setPdfList] = ([]);
 
   if (!session) {
     return (
@@ -19,6 +20,8 @@ export default function Invoice() {
       </div>
     );
   }
+
+  
 
   const addItem = () => {
     setItems([...items, { description: "", quantity: 1, price: 0 }]);
@@ -35,6 +38,7 @@ export default function Invoice() {
   };
 
   const generateInvoice = async () => {
+
     const response = await fetch("/api/generate-pdf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -42,7 +46,9 @@ export default function Invoice() {
     });
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);
-    window.open(url);
+    const fileName = `invoice-${pdfList.length + 1}.pdf`;
+    //window.open(url);
+    setPdfList((prevList) => [...prevList, { name: fileName, url}]);
   };
 
   return (
@@ -122,6 +128,10 @@ export default function Invoice() {
       <button className="bg-green-500 text-white px-4 py-2 mt-4" onClick={generateInvoice}>
         Generate PDF
       </button>
+
+
+
+
     </div>
   );
 }
